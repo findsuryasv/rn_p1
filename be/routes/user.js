@@ -1,10 +1,12 @@
 const router = require('express').Router()
 const userModel = require('../models/user');
+const categoryModel = require('../models/category');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 router.route('/register').post(async (req, res) => {
     try {
+        console.log(req.body);
         const hashedPassword = await bcrypt.hash(req.body.password, bcrypt.genSaltSync(10))
         const createdUser = await userModel.create({
             ...req.body,
@@ -13,9 +15,12 @@ router.route('/register').post(async (req, res) => {
         const token = jwt.sign(createdUser['_id'], 'CODER_V', {
             expiresIn: 3600
         })
-        res.status(201).json({
+        res.status(200).json({
             token,
-            name: createdUser['name']
+            user: {
+                _id: createdUser['_id'],
+                name: createdUser['name']
+            }
         });
     } catch (error) {
         console.log(error);
@@ -60,5 +65,16 @@ router.route('/authenticate').post(async (req, res) => {
         res.status(500).json(error);
     }
 });
+
+router.route('/categories').get(async (req, res) => {
+    try {
+        let cates = await categoryModel.find();
+        console.log(cates);
+        res.status(200).json(cates);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(error);
+    }
+})
 
 module.exports = router;

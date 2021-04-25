@@ -9,7 +9,7 @@ app.use(express.json());
 
 app.use(cors());
 
-app.use('user', userRouter);
+app.use('/user', userRouter);
 
 mongoose.connect('mongodb+srv://reactuser:reactuser@cluster0.78x1m.mongodb.net/test').then(() => {
     console.log('Connected to db')
